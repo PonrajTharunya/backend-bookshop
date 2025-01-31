@@ -93,6 +93,7 @@
 
 package org.example.mega_city_cab_service_app.controller;
 
+import jakarta.servlet.http.HttpSession;
 import org.example.mega_city_cab_service_app.dao.PersonDAO;
 import org.example.mega_city_cab_service_app.factory.AdminFactory;
 import org.example.mega_city_cab_service_app.factory.FactoryRegistry;
@@ -105,6 +106,7 @@ import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import org.example.mega_city_cab_service_app.service.PersonService;
+import org.example.mega_city_cab_service_app.util.JsonUtils;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -128,18 +130,46 @@ public class PersonServlet extends HttpServlet {
             // This lambda is a placeholder; actual parameters will be handled in doPost
             return null;
         });
+        FactoryRegistry.registerFactory("CUSTOMER", (name, address, mobile) -> {
+            // This lambda is a placeholder; actual parameters will be handled in doPost
+            return null;
+        });
+
     }
 
     @Override
     protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         resp.setContentType("application/json");
 
-        // Read JSON input
+        /// ////////////////
+
+        // Authentication check
+        HttpSession session = req.getSession(false);
+        if (session == null || session.getAttribute("role") == null) {
+            resp.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+            resp.getWriter().write("{\"error\": \"Not authenticated\"}");
+            return;
+        }
+        // Authorization check
+        String role = (String) session.getAttribute("role");
         String jsonInput = readRequestBody(req);
+        String requestedType = JsonUtils.extractValueFromJson(jsonInput, "type");
+
+        if (!isAuthorized(role, requestedType)) {
+            resp.setStatus(HttpServletResponse.SC_FORBIDDEN);
+            resp.getWriter().write("{\"error\": \"Unauthorized to create this type of user\"}");
+            return;
+        }
 
         // Delegate registration to the service
         String response = registrationService.registerPerson(jsonInput);
         resp.getWriter().write(response);
+    }
+    private boolean isAuthorized(String role, String requestedType) {
+        if (role == null || requestedType == null) return false;
+        if ("ADMIN".equalsIgnoreCase(role)) return true;
+        if ("EMPLOYEE".equalsIgnoreCase(role) && "CUSTOMER".equalsIgnoreCase(requestedType)) return true;
+        return false;
     }
 
     private String readRequestBody(HttpServletRequest req) throws IOException {
