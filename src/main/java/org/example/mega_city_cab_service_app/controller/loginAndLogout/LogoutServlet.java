@@ -1,5 +1,5 @@
 // LogoutServlet.java
-package org.example.mega_city_cab_service_app.controller;
+package org.example.mega_city_cab_service_app.controller.loginAndLogout;
 
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;

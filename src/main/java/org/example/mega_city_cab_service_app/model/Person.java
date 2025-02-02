@@ -5,10 +5,13 @@ public abstract class Person {
     private final String address;
     private final String mobile;
 
-    protected Person(String name, String address, String mobile) {
+
+
+    protected Person(String name, String address, String mobile ) {
         this.name = name;
         this.address = address;
         this.mobile = mobile;
+
     }
 
     public abstract String getType();
@@ -16,4 +19,5 @@ public abstract class Person {
     public String getName() { return name; }
     public String getAddress() { return address; }
     public String getMobile() { return mobile; }
+
 }

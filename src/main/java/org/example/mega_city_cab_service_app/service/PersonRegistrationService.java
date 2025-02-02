@@ -1,5 +1,6 @@
 package org.example.mega_city_cab_service_app.service;
 
+
 import org.example.mega_city_cab_service_app.factory.PersonFactory;
 import org.example.mega_city_cab_service_app.model.Person;
 import org.example.mega_city_cab_service_app.util.JsonUtils;
@@ -18,6 +19,7 @@ public class PersonRegistrationService {
         String name = JsonUtils.extractValueFromJson(jsonInput, "name");
         String address = JsonUtils.extractValueFromJson(jsonInput, "address");
         String mobile = JsonUtils.extractValueFromJson(jsonInput, "mobile");
+
 
         if (type == null || name == null || address == null || mobile == null) {
             return "{\"error\": \"Missing required fields in JSON input.\"}";

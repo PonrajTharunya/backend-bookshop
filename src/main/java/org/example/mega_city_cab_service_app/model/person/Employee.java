@@ -1,4 +1,6 @@
-package org.example.mega_city_cab_service_app.model;
+package org.example.mega_city_cab_service_app.model.person;
+
+import org.example.mega_city_cab_service_app.model.Person;
 
 public class Employee extends Person {
     private final double salary;
@@ -14,7 +16,6 @@ public class Employee extends Person {
     public String getType() {
         return "EMPLOYEE";
     }
-
     public double getSalary() { return salary; }
     public int getExperience() { return experience; }
 }
