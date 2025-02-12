@@ -1,4 +1,4 @@
-package org.project.mega_city_cab_service_app.service;
+package org.project.mega_city_cab_service_app.service.PersonService;
 
 public class PersonDeletionService {
     private final PersonService personService;

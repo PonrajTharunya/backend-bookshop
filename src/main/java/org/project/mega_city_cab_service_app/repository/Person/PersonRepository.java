@@ -1,4 +1,4 @@
-package org.project.mega_city_cab_service_app.repository;
+package org.project.mega_city_cab_service_app.repository.Person;
 
 import org.project.mega_city_cab_service_app.model.Parent.Person;
 

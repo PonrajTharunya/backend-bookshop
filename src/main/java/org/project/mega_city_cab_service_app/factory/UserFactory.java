@@ -3,7 +3,7 @@ package org.project.mega_city_cab_service_app.factory;
 import org.project.mega_city_cab_service_app.model.user.AdminUser;
 import org.project.mega_city_cab_service_app.model.user.CustomerUser;
 import org.project.mega_city_cab_service_app.model.user.EmployeeUser;
-import org.project.mega_city_cab_service_app.model.User;
+import org.project.mega_city_cab_service_app.model.Parent.User;
 
 public class UserFactory {
     public static User createUser(String email, String password, String role) {

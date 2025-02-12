@@ -1,13 +1,13 @@
 package org.project.mega_city_cab_service_app.model.person;
 
-import org.project.mega_city_cab_service_app.model.Person;
+import org.project.mega_city_cab_service_app.model.Parent.Person;
 
 public class Employee extends Person {
     private final double salary;
     private final int experience;
 
-    public Employee(String name, String address, String mobile, double salary, int experience) {
-        super(name, address, mobile);
+    public Employee(String name, String address, String mobile,String  username ,String password, double salary, int experience) {
+        super(name, address, mobile, username, password);
         this.salary = salary;
         this.experience = experience;
     }

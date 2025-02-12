@@ -1,7 +1,7 @@
-package org.project.mega_city_cab_service_app.service;
+package org.project.mega_city_cab_service_app.service.PersonService;
 
-import org.project.mega_city_cab_service_app.factory.PersonFactory;
-import org.project.mega_city_cab_service_app.model.Person;
+import org.project.mega_city_cab_service_app.factory.Interface.PersonFactory;
+import org.project.mega_city_cab_service_app.model.Parent.Person;
 import org.project.mega_city_cab_service_app.util.JsonUtils;
 
 public class PersonUpdateService {
@@ -18,6 +18,8 @@ public class PersonUpdateService {
         String name = JsonUtils.extractValueFromJson(jsonInput, "name");
         String address = JsonUtils.extractValueFromJson(jsonInput, "address");
         String newMobile = JsonUtils.extractValueFromJson(jsonInput, "mobile");
+        String  username= JsonUtils.extractValueFromJson(jsonInput, "username");
+        String password = JsonUtils.extractValueFromJson(jsonInput, "password");
 
         if (type == null || name == null || address == null || newMobile == null) {
             return "{\"error\": \"Missing required fields in JSON input.\"}";
@@ -30,7 +32,7 @@ public class PersonUpdateService {
         }
 
         // Create the updated person object
-        Person updatedPerson = factory.createPerson(jsonInput,name, address, newMobile);
+        Person updatedPerson = factory.createPerson(jsonInput,name, address, newMobile, username ,password);
 
         // Update the person
         boolean isUpdated = personService.updatePerson(originalMobile, updatedPerson);

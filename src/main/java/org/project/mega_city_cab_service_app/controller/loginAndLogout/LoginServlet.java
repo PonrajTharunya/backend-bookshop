@@ -76,7 +76,7 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
 import org.project.mega_city_cab_service_app.dao.loginuserDAO;
-import org.project.mega_city_cab_service_app.model.User;
+import org.project.mega_city_cab_service_app.model.Parent.User;
 import org.project.mega_city_cab_service_app.util.JsonUtils;
 
 import java.io.IOException;

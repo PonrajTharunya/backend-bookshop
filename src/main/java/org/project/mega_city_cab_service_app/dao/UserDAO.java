@@ -1,6 +1,6 @@
 package org.project.mega_city_cab_service_app.dao;
 
-import org.project.mega_city_cab_service_app.model.User;
+import org.project.mega_city_cab_service_app.model.Parent.User;
 
 public class UserDAO {
     // Hardcoded demo users (plaintext passwords)

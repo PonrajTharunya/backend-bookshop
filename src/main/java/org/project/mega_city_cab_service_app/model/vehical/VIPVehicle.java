@@ -1,6 +1,6 @@
 package org.project.mega_city_cab_service_app.model.vehical;
 
-import org.project.mega_city_cab_service_app.model.Vehicle;
+import org.project.mega_city_cab_service_app.model.Parent.Vehicle;
 
 public class VIPVehicle extends Vehicle {
     private final boolean hasChauffeurService; // Unique attribute

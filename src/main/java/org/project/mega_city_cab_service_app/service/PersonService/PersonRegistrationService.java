@@ -45,10 +45,9 @@
 //}
 
 
-package org.project.mega_city_cab_service_app.service;
-
-import org.project.mega_city_cab_service_app.factory.PersonFactory;
-import org.project.mega_city_cab_service_app.model.Person;
+package org.project.mega_city_cab_service_app.service.PersonService;
+import org.project.mega_city_cab_service_app.factory.Interface.PersonFactory;
+import org.project.mega_city_cab_service_app.model.Parent.Person;
 import org.project.mega_city_cab_service_app.util.JsonUtils;
 
 public class PersonRegistrationService {
@@ -56,8 +55,8 @@ public class PersonRegistrationService {
     private final PersonFactoryService personFactoryService;
 
     public PersonRegistrationService(PersonService personService, PersonFactoryService personFactoryService) {
-        this.personService = personService;
-        this.personFactoryService = personFactoryService;
+        this.personService = personService;//responsible for handling business logic
+        this.personFactoryService = personFactoryService;// responsible for creating person object creation
     }
 
     public String registerPerson(String jsonInput) {
@@ -65,8 +64,11 @@ public class PersonRegistrationService {
         String name = JsonUtils.extractValueFromJson(jsonInput, "name");
         String address = JsonUtils.extractValueFromJson(jsonInput, "address");
         String mobile = JsonUtils.extractValueFromJson(jsonInput, "mobile");
+        String  username= JsonUtils.extractValueFromJson(jsonInput, "username");
+        String password= JsonUtils.extractValueFromJson(jsonInput, "password");
 
-        if (type == null || name == null || address == null || mobile == null) {
+
+        if (type == null || name == null || address == null || mobile == null || username == null || password == null) {
             return "{\"error\": \"Missing required fields in JSON input.\"}";
         }
 
@@ -77,7 +79,7 @@ public class PersonRegistrationService {
         }
 
         // Create the person object
-        Person person = factory.createPerson(jsonInput,name, address, mobile);
+        Person person = factory.createPerson(jsonInput,name, address, mobile, username, password);
 
         // Register the person
         boolean isRegistered = personService.registerPerson(person);

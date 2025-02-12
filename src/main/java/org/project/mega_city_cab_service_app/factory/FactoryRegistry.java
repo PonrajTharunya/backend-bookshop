@@ -1,5 +1,7 @@
 package org.project.mega_city_cab_service_app.factory;
 
+import org.project.mega_city_cab_service_app.factory.Interface.PersonFactory;
+
 import java.util.HashMap;
 import java.util.Map;
 
@@ -11,6 +13,13 @@ public class FactoryRegistry {
     }
 
     public static PersonFactory getFactory(String type) {
+
         return registry.get(type.toUpperCase());
+    }
+
+    //
+
+    public static void clear() {
+        registry.clear();
     }
 }
