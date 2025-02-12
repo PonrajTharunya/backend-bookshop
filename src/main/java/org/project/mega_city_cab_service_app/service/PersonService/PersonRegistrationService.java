@@ -71,13 +71,13 @@ public class PersonRegistrationService {
         }
 
         // Get the factory from the factory service
-        PersonFactory factory = personFactoryService.getFactory(type, jsonInput);
+        PersonFactory factory = personFactoryService.getFactory(type);
         if (factory == null) {
             return "{\"error\": \"Invalid person type.\"}";
         }
 
         // Create the person object
-        Person person = factory.createPerson(name, address, mobile);
+        Person person = factory.createPerson(jsonInput,name, address, mobile);
 
         // Register the person
         boolean isRegistered = personService.registerPerson(person);

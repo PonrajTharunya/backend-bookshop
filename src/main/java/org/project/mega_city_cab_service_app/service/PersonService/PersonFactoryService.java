@@ -31,13 +31,16 @@
 
 
 package org.project.mega_city_cab_service_app.service;
-
+import org.project.mega_city_cab_service_app.factory.FactoryRegistry;
 import org.project.mega_city_cab_service_app.factory.PersonFactory;
 import org.project.mega_city_cab_service_app.factory.managePersonFactory.AdminFactory;
 import org.project.mega_city_cab_service_app.factory.managePersonFactory.CustomerFactory;
 import org.project.mega_city_cab_service_app.factory.managePersonFactory.EmployeeFactory;
+import org.project.mega_city_cab_service_app.model.Person;
+import org.project.mega_city_cab_service_app.model.person.Customer;
+import org.project.mega_city_cab_service_app.model.person.Employee;
 import org.project.mega_city_cab_service_app.util.JsonUtils;
-
+/*
 public class PersonFactoryService {
     public PersonFactory getFactory(String type, String jsonInput) {
         if (type == null) return null;
@@ -57,4 +60,22 @@ public class PersonFactoryService {
                 return null;
         }
     }
+}*/
+public class PersonFactoryService {
+
+    public PersonFactoryService() {
+        // Register default factories during initialization
+        FactoryRegistry.registerFactory("ADMIN", new AdminFactory());
+        FactoryRegistry.registerFactory("EMPLOYEE", new EmployeeFactory());
+        FactoryRegistry.registerFactory("CUSTOMER", new CustomerFactory());
+    }
+
+    public PersonFactory getFactory(String type) {
+        PersonFactory factory = FactoryRegistry.getFactory(type);
+        if (factory == null) {
+            throw new IllegalArgumentException("Invalid person type: " + type);
+        }
+        return factory;
+    }
+
 }

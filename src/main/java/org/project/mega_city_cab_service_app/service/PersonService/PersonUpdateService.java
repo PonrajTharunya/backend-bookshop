@@ -24,13 +24,13 @@ public class PersonUpdateService {
         }
 
         // Get the factory from the factory service
-        PersonFactory factory = personFactoryService.getFactory(type, jsonInput);
+        PersonFactory factory = personFactoryService.getFactory(type);
         if (factory == null) {
             return "{\"error\": \"Invalid person type.\"}";
         }
 
         // Create the updated person object
-        Person updatedPerson = factory.createPerson(name, address, newMobile);
+        Person updatedPerson = factory.createPerson(jsonInput,name, address, newMobile);
 
         // Update the person
         boolean isUpdated = personService.updatePerson(originalMobile, updatedPerson);

@@ -11,7 +11,6 @@ public abstract class Person {
         this.name = name;
         this.address = address;
         this.mobile = mobile;
-
     }
 
     public abstract String getType();
