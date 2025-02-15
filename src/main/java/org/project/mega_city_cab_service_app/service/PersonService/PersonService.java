@@ -8,20 +8,21 @@ public class PersonService {
 //Constructor Parameters=>PersonDAO object as a parameter
     //loose coupling
     public PersonService(PersonDAO personDAO) {
+
         this.personDAO = personDAO;
     }
     //Internally this is how its work
         //Person person = new Customer("John Doe", "123 Main St", "9876543210");
         //personService.registerPerson(person);
-
     public boolean registerPerson(Person person) {
+
         return personDAO.savePerson(person);
     }
 
     public Person getPerson(String mobile) {
+
         return personDAO.findPersonByMobile(mobile);
     }
-
     //violate SRP
 //    public boolean updatePerson(String originalMobile, Person updatedPerson) {
 //        // Fetch the existing person
@@ -38,12 +39,12 @@ public class PersonService {
 //        // Save the updated person
 //        return personDAO.savePerson(updatedPerson);
 //    }
-
     public boolean updatePerson(String originalMobile, Person updatedPerson) {
+
         return personDAO.updatePerson(originalMobile, updatedPerson);
     }
-
     public boolean deletePerson(String mobile) {
+
         return personDAO.deletePerson(mobile);
     }
 

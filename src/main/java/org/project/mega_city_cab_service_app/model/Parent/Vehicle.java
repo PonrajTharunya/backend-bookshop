@@ -1,6 +1,6 @@
 package org.project.mega_city_cab_service_app.model.Parent;
 
-public abstract class Vehicle {
+public abstract class  Vehicle {
     private final String name;
     private final String model;
     private final String color;

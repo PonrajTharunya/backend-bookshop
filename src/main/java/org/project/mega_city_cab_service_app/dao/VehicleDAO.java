@@ -1,40 +1,69 @@
 package org.project.mega_city_cab_service_app.dao;
 
 import org.project.mega_city_cab_service_app.model.Parent.Vehicle;
-import org.project.mega_city_cab_service_app.model.vehical.PremiumVehicle;
-import org.project.mega_city_cab_service_app.model.vehical.VIPVehicle;
+import org.project.mega_city_cab_service_app.repository.Vehicle.*;
+import org.project.mega_city_cab_service_app.util.DBConnection;
 
+import java.sql.*;
 import java.util.HashMap;
 import java.util.Map;
 
 public class VehicleDAO {
-    //access modifier,final modifier, type declaration, field name, initialization
-    private final Map<String, Vehicle> vehicleMap=new HashMap<>();
-//here keys are String bcz objects representing the vehicle type and the values are Vehicle objects.
-    //It tells the compiler that the addVehicle method expects an object of type Vehicle 2. name of variable that hold the vehicle
-    public boolean addVehicle(Vehicle vehicle) {
-        System.out.println("serving Vehicle Type : "+vehicle.getType());
-        System.out.println("Vehicle Model : "+vehicle.getModel());
-        System.out.println("Vehicle Color : "+vehicle.getColor());
-        System.out.println("Vehicle year : "+vehicle.getYear());
-        System.out.println("Vehicle RegistrationNumber : "+vehicle.getRegistrationNumber());
-        System.out.println("Vehicle seatingCapacity: "+vehicle.getSeatingCapacity());
+    private final Map<String, VehicleRepository> repositories;
 
-
-        if (vehicle instanceof PremiumVehicle){
-            PremiumVehicle pv = (PremiumVehicle) vehicle;
-            System.out.println("hasWiFi : "+pv.hasWiFi());
-        }
-        else if (vehicle instanceof VIPVehicle){
-            VIPVehicle vip = (VIPVehicle) vehicle;
-            System.out.println("hasChauffeurService : "+vip.hasChauffeurService());
-        }
-        //store in to map
-        //string object //key and value//object
-        vehicleMap.put(vehicle.getType(), vehicle);
-        return true;
+    public VehicleDAO(DBConnection dbConnection) {
+        this.repositories = new HashMap<>();
+        repositories.put("Regular", new RegularVehicleRepository(dbConnection));
+        repositories.put("Premium", new PremiumVehicleRepository(dbConnection));
+        repositories.put("VIP", new VIPVehicleRepository(dbConnection));
     }
 
+    public boolean addVehicle(Vehicle vehicle) {
+        VehicleRepository repository = repositories.get(vehicle.getType());
+        if (repository == null) {
+            throw new IllegalArgumentException("Unsupported vehicle type: " + vehicle.getType());
+        }
+        return repository.save(vehicle);
+    }
 
+    public Vehicle findVehicalByID(int vehicleId) {
+        String type = getTypeFromDatabase(vehicleId);
+        VehicleRepository repository = repositories.get(type);
+        if (repository == null) {
+            throw new IllegalArgumentException("Unsupported vehicle type: " + type);
+        }
+        return repository.findByID(vehicleId);
+    }
 
+    public boolean updateVehicle(Vehicle vehicle) {
+        VehicleRepository repository = repositories.get(vehicle.getType());
+        if (repository == null) {
+            throw new IllegalArgumentException("Unsupported vehicle type: " + vehicle.getType());
+        }
+        return repository.update(vehicle);
+    }
+
+    public boolean deleteVehicle(int vehicleId) {
+        String type = getTypeFromDatabase(vehicleId);
+        VehicleRepository repository = repositories.get(type);
+        if (repository == null) {
+            throw new IllegalArgumentException("Unsupported vehicle type: " + type);
+        }
+        return repository.delete(vehicleId);
+    }
+
+    private String getTypeFromDatabase(int vehicleId) {
+        String sql = "SELECT type FROM vehicle WHERE id = ?";
+        try (Connection connection = DBConnection.getInstance().getConnection();
+             PreparedStatement statement = connection.prepareStatement(sql)) {
+            statement.setInt(1, vehicleId);
+            ResultSet resultSet = statement.executeQuery();
+            if (resultSet.next()) {
+                return resultSet.getString("type");
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        throw new IllegalArgumentException("Vehicle not found with ID: " + vehicleId);
+    }
 }

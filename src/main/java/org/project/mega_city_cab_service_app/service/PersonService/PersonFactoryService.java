@@ -29,10 +29,11 @@
 //    }
 //}
 package org.project.mega_city_cab_service_app.service.PersonService;
-import org.project.mega_city_cab_service_app.factory.FactoryRegistry;
+import org.project.mega_city_cab_service_app.factory.Registry.PersonFactoryRegistry;
 import org.project.mega_city_cab_service_app.factory.Interface.PersonFactory;
 import org.project.mega_city_cab_service_app.factory.managePersonFactory.AdminFactory;
 import org.project.mega_city_cab_service_app.factory.managePersonFactory.CustomerFactory;
+import org.project.mega_city_cab_service_app.factory.managePersonFactory.DriverFactory;
 import org.project.mega_city_cab_service_app.factory.managePersonFactory.EmployeeFactory;
 /*
 public class PersonFactoryService {
@@ -60,13 +61,14 @@ public class PersonFactoryService {
 
     public PersonFactoryService() {
         // Register default factories during initialization
-        FactoryRegistry.registerFactory("ADMIN", new AdminFactory());
-        FactoryRegistry.registerFactory("EMPLOYEE", new EmployeeFactory());
-        FactoryRegistry.registerFactory("CUSTOMER", new CustomerFactory());
+        PersonFactoryRegistry.registerFactory("ADMIN", new AdminFactory());
+        PersonFactoryRegistry.registerFactory("EMPLOYEE", new EmployeeFactory());
+        PersonFactoryRegistry.registerFactory("CUSTOMER", new CustomerFactory());
+        PersonFactoryRegistry.registerFactory("DRIVER", new DriverFactory());
     }
 
     public PersonFactory getFactory(String type) {
-        PersonFactory factory = FactoryRegistry.getFactory(type);
+        PersonFactory factory = PersonFactoryRegistry.getFactory(type);
         if (factory == null) {
             throw new IllegalArgumentException("Invalid person type: " + type);
         }

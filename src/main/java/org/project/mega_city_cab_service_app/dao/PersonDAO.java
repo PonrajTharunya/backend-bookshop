@@ -68,7 +68,6 @@
 //
 //}
 /// /////////////////////////////////////////
-
 //package org.project.mega_city_cab_service_app.dao;
 //
 //import org.project.mega_city_cab_service_app.model.Parent.Person;
@@ -360,12 +359,8 @@
 //}
 
 package org.project.mega_city_cab_service_app.dao;
-
 import org.project.mega_city_cab_service_app.model.Parent.Person;
-import org.project.mega_city_cab_service_app.repository.Person.AdminRepository;
-import org.project.mega_city_cab_service_app.repository.Person.CustomerRepository;
-import org.project.mega_city_cab_service_app.repository.Person.EmployeeRepository;
-import org.project.mega_city_cab_service_app.repository.Person.PersonRepository;
+import org.project.mega_city_cab_service_app.repository.Person.*;
 import org.project.mega_city_cab_service_app.util.DBConnection;
 
 import java.sql.*;
@@ -380,6 +375,7 @@ public class PersonDAO {
         repositories.put("ADMIN", new AdminRepository(dbConnection));
         repositories.put("CUSTOMER", new CustomerRepository(dbConnection));
         repositories.put("EMPLOYEE", new EmployeeRepository(dbConnection));
+        repositories.put("DRIVER",new DriverRepository(dbConnection));
         // Add more repositories as needed
     }
 

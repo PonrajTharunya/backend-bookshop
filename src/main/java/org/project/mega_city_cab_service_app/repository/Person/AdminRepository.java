@@ -150,3 +150,38 @@ public class AdminRepository implements PersonRepository {
         }
     }
 }
+
+
+//package org.project.mega_city_cab_service_app.repository.Person;
+//
+//import org.project.mega_city_cab_service_app.model.person.Admin;
+//import org.project.mega_city_cab_service_app.model.Parent.Person;
+//import org.project.mega_city_cab_service_app.util.DBConnection;
+//import java.sql.*;
+//
+//public class AdminRepository extends GenericPersonRepository<Admin> {
+//
+//    public AdminRepository(DBConnection dbConnection) {
+//        super(dbConnection, Admin.class); // Pass the type token for Admin
+//    }
+//
+//    @Override
+//    protected void saveEntitySpecificData(Connection connection, int personId, Admin person) throws SQLException {
+//        // No additional tables for Admin
+//    }
+//
+//    @Override
+//    protected Admin loadEntitySpecificData(int id, String name, String address, String mobile, String username, String password) throws SQLException {
+//        return new Admin(name, address, mobile, username, password);
+//    }
+//
+//    @Override
+//    protected void updateEntitySpecificData(Connection connection, int personId, Admin updatedPerson) throws SQLException {
+//        // No additional tables for Admin
+//    }
+//
+//    @Override
+//    protected void deleteEntitySpecificData(Connection connection, int personId) throws SQLException {
+//        // No additional tables for Admin
+//    }
+//}

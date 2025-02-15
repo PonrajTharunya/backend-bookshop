@@ -4,16 +4,16 @@ import org.project.mega_city_cab_service_app.factory.Interface.VehicleFactory;
 import org.project.mega_city_cab_service_app.model.Parent.Vehicle;
 import org.project.mega_city_cab_service_app.util.JsonUtils;
 
-public class VehicleRegistrationService {
+public class VehicleUpdateService {
     private final VehicleService vehicleService;
     private final VehicleFactoryService vehicleFactoryService;
 
-    public VehicleRegistrationService(VehicleService vehicleService, VehicleFactoryService vehicleFactoryService) {
-        this.vehicleService = vehicleService; // Responsible for handling business logic
-        this.vehicleFactoryService = vehicleFactoryService; // Responsible for creating vehicle objects
+    public VehicleUpdateService(VehicleService vehicleService, VehicleFactoryService vehicleFactoryService) {
+        this.vehicleService = vehicleService;
+        this.vehicleFactoryService = vehicleFactoryService;
     }
 
-    public String registerVehicle(String jsonInput) {
+    public String updateVehicle(int originalVehicleId, String jsonInput) {
         // Extract fields from JSON input
         String type = JsonUtils.extractValueFromJson(jsonInput, "type");
         String name = JsonUtils.extractValueFromJson(jsonInput, "name");
@@ -47,15 +47,15 @@ public class VehicleRegistrationService {
             return "{\"error\": \"Invalid vehicle type.\"}";
         }
 
-        // Create the vehicle object
-        Vehicle vehicle = factory.createVehicle(jsonInput, name, model, color, year, registrationNumber, seatingCapacity);
+        // Create the updated vehicle object
+        Vehicle updatedVehicle = factory.createVehicle(jsonInput, name, model, color, year, registrationNumber, seatingCapacity);
 
-        // Register the vehicle
-        boolean isRegistered = vehicleService.registerVehicle(vehicle);
-        if (isRegistered) {
-            return "{\"message\": \"Vehicle registered successfully!\"}";
+        // Update the vehicle
+        boolean isUpdated = vehicleService.updateVehicle(updatedVehicle);
+        if (isUpdated) {
+            return "{\"message\": \"Vehicle updated successfully!\"}";
         } else {
-            return "{\"error\": \"Failed to register vehicle.\"}";
+            return "{\"error\": \"Failed to update vehicle.\"}";
         }
     }
 }

@@ -1,4 +1,8 @@
+//
 package org.project.mega_city_cab_service_app.util;
+
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 
 public class JsonUtils {
     /**
@@ -38,7 +42,41 @@ public class JsonUtils {
 
         return value;
     }
+
+    /**
+     * Parses a LocalDateTime from a string in ISO-8601 format (e.g., "2023-10-15T09:00:00").
+     *
+     * @param dateTimeStr The date-time string to parse.
+     * @return A LocalDateTime object, or null if parsing fails.
+     */
+    public static LocalDateTime parseLocalDateTime(String dateTimeStr) {
+        if (dateTimeStr == null || dateTimeStr.isEmpty()) {
+            return null;
+        }
+
+        try {
+            DateTimeFormatter formatter = DateTimeFormatter.ISO_LOCAL_DATE_TIME;
+            return LocalDateTime.parse(dateTimeStr, formatter);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return null; // Return null if parsing fails
+        }
+    }
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 //package org.example.mega_city_cab_service_app.util;
 //
