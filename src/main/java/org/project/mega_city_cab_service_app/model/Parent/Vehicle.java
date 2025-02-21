@@ -1,6 +1,7 @@
 package org.project.mega_city_cab_service_app.model.Parent;
 
 public abstract class  Vehicle {
+    private  int id; // Add this field
     private final String name;
     private final String model;
     private final String color;
@@ -9,6 +10,7 @@ public abstract class  Vehicle {
     private final int seatingCapacity; // Common attribute
 
     protected Vehicle(String name, String model, String color, int year, int registrationNumber, int seatingCapacity) {
+        this.id=-1;
         this.name = name;
         this.model = model;
         this.color = color;
@@ -18,6 +20,15 @@ public abstract class  Vehicle {
     }
 
     public abstract String getType(); // Abstract method to define vehicle type
+
+    public int getId() {
+        return id;
+    }
+
+    public void setId(int id) { // Setter for ID
+        this.id = id;
+    }
+
 
     public String getName() {
         return name;
@@ -42,4 +53,6 @@ public abstract class  Vehicle {
     public int getSeatingCapacity() {
         return seatingCapacity;
     }
+
+
 }

@@ -6,6 +6,7 @@ import org.project.mega_city_cab_service_app.util.DBConnection;
 
 import java.sql.*;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 public class VehicleDAO {
@@ -65,5 +66,12 @@ public class VehicleDAO {
             e.printStackTrace();
         }
         throw new IllegalArgumentException("Vehicle not found with ID: " + vehicleId);
+    }
+    public List<Vehicle> findVehiclesByType(String type) {
+        VehicleRepository repository = repositories.get(type);
+        if (repository == null) {
+            throw new IllegalArgumentException("Unsupported vehicle type: " + type);
+        }
+        return repository.findAll();
     }
 }

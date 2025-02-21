@@ -5,6 +5,8 @@ import org.project.mega_city_cab_service_app.model.Parent.Vehicle;
 import org.project.mega_city_cab_service_app.util.DBConnection;
 
 import java.sql.*;
+import java.util.ArrayList;
+import java.util.List;
 
 public class RegularVehicleRepository implements VehicleRepository {
     private final DBConnection dbConnection;
@@ -15,7 +17,7 @@ public class RegularVehicleRepository implements VehicleRepository {
 
     @Override
     public boolean save(Vehicle vehicle) {
-        if (!(vehicle instanceof RegularVehicle regularVehicle)) {
+        if (!(vehicle instanceof RegularVehicle)) {
             throw new IllegalArgumentException("Invalid vehicle type");
         }
 
@@ -41,14 +43,6 @@ public class RegularVehicleRepository implements VehicleRepository {
                 if (!generatedKeys.next()) {
                     throw new SQLException("Failed to retrieve generated keys.");
                 }
-                int vehicleId = generatedKeys.getInt(1);
-
-                // Insert into `regular_vehicle` table
-                String regularSql = "INSERT INTO regular_vehicle (id) VALUES (?)";
-                try (PreparedStatement regularStatement = connection.prepareStatement(regularSql)) {
-                    regularStatement.setInt(1, vehicleId);
-                    regularStatement.executeUpdate();
-                }
             }
 
             connection.commit();
@@ -65,19 +59,23 @@ public class RegularVehicleRepository implements VehicleRepository {
     @Override
     public Vehicle findByID(int vehicleId) {
         String vehicleSql = "SELECT * FROM vehicle WHERE id = ?";
-        String regularSql = "SELECT * FROM regular_vehicle WHERE id = ?";
 
         try (Connection connection = dbConnection.getConnection();
-             PreparedStatement vehicleStatement = connection.prepareStatement(vehicleSql);
-             PreparedStatement regularStatement = connection.prepareStatement(regularSql)) {
+             PreparedStatement vehicleStatement = connection.prepareStatement(vehicleSql)) {
 
+            // Set the parameter for the query
             vehicleStatement.setInt(1, vehicleId);
+
+            // Execute the query
             ResultSet vehicleResultSet = vehicleStatement.executeQuery();
 
+            // Check if a result was found
             if (!vehicleResultSet.next()) {
                 return null; // No vehicle found
             }
 
+            // Extract fields from the result set
+            int id = vehicleResultSet.getInt("id"); // Retrieve the ID from the database
             String name = vehicleResultSet.getString("name");
             String model = vehicleResultSet.getString("model");
             String color = vehicleResultSet.getString("color");
@@ -85,23 +83,23 @@ public class RegularVehicleRepository implements VehicleRepository {
             int registrationNumber = vehicleResultSet.getInt("registration_number");
             int seatingCapacity = vehicleResultSet.getInt("seating_capacity");
 
-            regularStatement.setInt(1, vehicleId);
-            ResultSet regularResultSet = regularStatement.executeQuery();
+            // Create the vehicle object
+            RegularVehicle vehicle = new RegularVehicle(name, model, color, year, registrationNumber, seatingCapacity);
 
-            if (!regularResultSet.next()) {
-                return null; // No regular vehicle found
-            }
+            // Set the ID fetched from the database
+            vehicle.setId(id);
 
-            return new RegularVehicle(name, model, color, year, registrationNumber, seatingCapacity);
+            // Return the fully initialized vehicle object
+            return vehicle;
         } catch (SQLException e) {
             e.printStackTrace();
         }
-        return null;
+        return null; // Return null in case of an error
     }
 
     @Override
     public boolean update(Vehicle vehicle) {
-        if (!(vehicle instanceof RegularVehicle regularVehicle)) {
+        if (!(vehicle instanceof RegularVehicle)) {
             throw new IllegalArgumentException("Invalid vehicle type");
         }
 
@@ -110,6 +108,7 @@ public class RegularVehicleRepository implements VehicleRepository {
             connection = dbConnection.getConnection();
             connection.setAutoCommit(false);
 
+            // Update `vehicle` table
             String sql = "UPDATE vehicle SET name = ?, model = ?, color = ?, year = ?, registration_number = ?, seating_capacity = ? " +
                     "WHERE id = ?";
             try (PreparedStatement statement = connection.prepareStatement(sql)) {
@@ -141,12 +140,7 @@ public class RegularVehicleRepository implements VehicleRepository {
             connection = dbConnection.getConnection();
             connection.setAutoCommit(false);
 
-            String regularSql = "DELETE FROM regular_vehicle WHERE id = ?";
-            try (PreparedStatement regularStatement = connection.prepareStatement(regularSql)) {
-                regularStatement.setInt(1, vehicleId);
-                regularStatement.executeUpdate();
-            }
-
+            // Delete from `vehicle` table
             String vehicleSql = "DELETE FROM vehicle WHERE id = ?";
             try (PreparedStatement vehicleStatement = connection.prepareStatement(vehicleSql)) {
                 vehicleStatement.setInt(1, vehicleId);
@@ -162,6 +156,40 @@ public class RegularVehicleRepository implements VehicleRepository {
         } finally {
             resetAutoCommit(connection);
         }
+    }
+
+    @Override
+    public List<Vehicle> findAll() {
+        String sql = "SELECT * FROM vehicle WHERE type = 'Regular'";
+        List<Vehicle> vehicles = new ArrayList<>();
+
+        try (Connection connection = dbConnection.getConnection();
+             PreparedStatement statement = connection.prepareStatement(sql)) {
+
+            ResultSet resultSet = statement.executeQuery();
+            while (resultSet.next()) {
+                // Extract fields from the result set
+                int id = resultSet.getInt("id"); // Retrieve the ID from the database
+                String name = resultSet.getString("name");
+                String model = resultSet.getString("model");
+                String color = resultSet.getString("color");
+                int year = resultSet.getInt("year");
+                int registrationNumber = resultSet.getInt("registration_number");
+                int seatingCapacity = resultSet.getInt("seating_capacity");
+
+                // Create the vehicle object
+                RegularVehicle vehicle = new RegularVehicle(name, model, color, year, registrationNumber, seatingCapacity);
+
+                // Set the ID fetched from the database
+                vehicle.setId(id);
+
+                // Add the vehicle to the list
+                vehicles.add(vehicle);
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return vehicles;
     }
 
     private void rollback(Connection connection) {

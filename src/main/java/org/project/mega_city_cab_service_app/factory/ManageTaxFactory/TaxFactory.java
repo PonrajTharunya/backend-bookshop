@@ -11,7 +11,6 @@ public class TaxFactory implements GenericFactory<Tax> {
         String description = JsonUtils.extractValueFromJson(jsonInput, "description");
         double taxRate = Double.parseDouble(JsonUtils.extractValueFromJson(jsonInput, "tax_rate"));
         boolean status = Boolean.parseBoolean(JsonUtils.extractValueFromJson(jsonInput, "status"));
-
         return new Tax(description, taxRate, status);
     }
 }

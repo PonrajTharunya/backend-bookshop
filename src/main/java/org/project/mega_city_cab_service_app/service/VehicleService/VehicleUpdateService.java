@@ -48,7 +48,10 @@ public class VehicleUpdateService {
         }
 
         // Create the updated vehicle object
-        Vehicle updatedVehicle = factory.createVehicle(jsonInput, name, model, color, year, registrationNumber, seatingCapacity);
+        Vehicle updatedVehicle = factory.createVehicle(jsonInput,name, model, color, year, registrationNumber, seatingCapacity);
+
+        // Set the ID explicitly
+        updatedVehicle.setId(originalVehicleId); // Set the ID from the URL parameter
 
         // Update the vehicle
         boolean isUpdated = vehicleService.updateVehicle(updatedVehicle);

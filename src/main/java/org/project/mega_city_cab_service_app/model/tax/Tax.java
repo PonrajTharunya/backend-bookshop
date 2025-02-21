@@ -11,7 +11,6 @@ public class Tax {
         this.taxRate = taxRate;
         this.status = status;
     }
-
     // Getters and Setters
     public int getTaxId() {
         return taxId;

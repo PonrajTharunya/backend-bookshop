@@ -3,6 +3,8 @@ package org.project.mega_city_cab_service_app.service.VehicleService;
 import org.project.mega_city_cab_service_app.dao.VehicleDAO;
 import org.project.mega_city_cab_service_app.model.Parent.Vehicle;
 
+import java.util.List;
+
 public class VehicleService {
     private final VehicleDAO vehicleDAO;
 
@@ -24,5 +26,9 @@ public class VehicleService {
 
     public boolean deleteVehicle(int vehicleId) {
         return vehicleDAO.deleteVehicle(vehicleId);
+    }
+
+    public List<Vehicle> getVehiclesByType(String type) {
+        return vehicleDAO.findVehiclesByType(type);
     }
 }
