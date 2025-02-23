@@ -7,4 +7,5 @@ public interface PersonRepository {
     Person findByMobile(String mobile);
     boolean update(String originalMobile, Person updatedPerson);
     boolean delete(String mobile);
+    Person findById(int id);
 }

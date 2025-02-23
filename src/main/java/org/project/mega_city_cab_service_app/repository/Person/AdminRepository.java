@@ -2,6 +2,7 @@ package org.project.mega_city_cab_service_app.repository.Person;
 
 import org.project.mega_city_cab_service_app.model.person.Admin;
 import org.project.mega_city_cab_service_app.model.Parent.Person;
+import org.project.mega_city_cab_service_app.model.person.Customer;
 import org.project.mega_city_cab_service_app.util.DBConnection;
 
 import java.sql.*;
@@ -70,6 +71,32 @@ public class AdminRepository implements PersonRepository {
         }
         return null;
     }
+
+    @Override
+    public Person findById(int id) {
+        String personSql = "SELECT * FROM person WHERE id = ?";
+
+        try (Connection connection = dbConnection.getConnection();
+             PreparedStatement personStatement = connection.prepareStatement(personSql)) {
+
+            personStatement.setInt(1, id);
+            ResultSet personResultSet = personStatement.executeQuery();
+
+            if (personResultSet.next()) {
+                String name = personResultSet.getString("name");
+                String address = personResultSet.getString("address");
+                String mobile = personResultSet.getString("mobile");
+                String username = personResultSet.getString("username");
+                String password = personResultSet.getString("password");
+
+                return new Admin(name, address, mobile, username, password);
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
+
 
     @Override
     public boolean update(String originalMobile, Person updatedPerson) {

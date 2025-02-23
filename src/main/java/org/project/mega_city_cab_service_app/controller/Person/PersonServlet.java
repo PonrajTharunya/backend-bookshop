@@ -283,17 +283,40 @@
 
         @Override
         protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-            try{
+            try {
+                // Ensure only authorized users can access
                 AuthorizationService.checkRole(req, "ADMIN");
+
                 resp.setContentType("application/json");
+
+                // Check if 'id' parameter is provided
+                String idParam = req.getParameter("id");
+                if (idParam != null && !idParam.isEmpty()) {
+                    try {
+                        int id = Integer.parseInt(idParam);
+                        String response = retrievalService.getPersonById(id);
+                        resp.getWriter().write(response);
+                        return;
+                    } catch (NumberFormatException e) {
+                        resp.getWriter().write("{\"error\": \"Invalid ID format.\"}");
+                        return;
+                    }
+                }
+
+                // Check if 'mobile' parameter is provided
                 String mobile = req.getParameter("mobile");
-                String response = retrievalService.getPerson(mobile);
-                resp.getWriter().write(response);
-            }
-            catch (AccessDeniedException e) {
+                if (mobile != null && !mobile.isEmpty()) {
+                    String response = retrievalService.getPerson(mobile);
+                    resp.getWriter().write(response);
+                    return;
+                }
+
+                // If neither 'id' nor 'mobile' is provided, return an error
+                resp.getWriter().write("{\"error\": \"Either 'id' or 'mobile' parameter is required.\"}");
+
+            } catch (AccessDeniedException e) {
                 resp.sendError(HttpServletResponse.SC_FORBIDDEN, e.getMessage());
             }
-
         }
 
         @Override

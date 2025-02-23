@@ -99,7 +99,50 @@ public class EmployeeRepository implements PersonRepository {
         }
         return null;
     }
+    @Override
+    public Person findById(int id) {
+        String personSql = "SELECT * FROM person WHERE id = ?";
+        String employeeSql = "SELECT * FROM employee WHERE id = ?";
 
+        try (Connection connection = dbConnection.getConnection();
+             PreparedStatement personStatement = connection.prepareStatement(personSql);
+             PreparedStatement employeeStatement = connection.prepareStatement(employeeSql)) {
+
+            // Retrieve from the `person` table
+            personStatement.setInt(1, id);
+            ResultSet personResultSet = personStatement.executeQuery();
+
+            if (!personResultSet.next()) {
+                return null; // No person found
+            }
+
+            // Extract data from the `person` table
+            String name = personResultSet.getString("name");
+            String address = personResultSet.getString("address");
+            String mobile = personResultSet.getString("mobile");
+            String username = personResultSet.getString("username");
+            String password = personResultSet.getString("password");
+
+            // Retrieve from the `employee` table
+            employeeStatement.setInt(1, id);
+            ResultSet employeeResultSet = employeeStatement.executeQuery();
+
+            if (!employeeResultSet.next()) {
+                return null; // No employee found
+            }
+
+            // Extract data from the `employee` table
+            double salary = employeeResultSet.getDouble("salary");
+            int experience = employeeResultSet.getInt("experience");
+
+            // Create and return a new Employee object
+            return new Employee(name, address, mobile, username, password, salary, experience);
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
     @Override
     public boolean update(String originalMobile, Person updatedPerson) {
         if (!(updatedPerson instanceof Employee employee)) {

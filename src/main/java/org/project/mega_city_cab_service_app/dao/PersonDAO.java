@@ -375,7 +375,7 @@ public class PersonDAO {
         repositories.put("ADMIN", new AdminRepository(dbConnection));
         repositories.put("CUSTOMER", new CustomerRepository(dbConnection));
         repositories.put("EMPLOYEE", new EmployeeRepository(dbConnection));
-        repositories.put("DRIVER",new DriverRepository(dbConnection));
+        repositories.put("DRIVER",new    DriverRepository(dbConnection));
         // Add more repositories as needed
     }
 
@@ -413,6 +413,7 @@ public class PersonDAO {
         return repository.delete(mobile);
     }
 
+
     private String getTypeFromDatabase(String mobile) {
         String sql = "SELECT type FROM person WHERE mobile = ?";
         try (Connection connection = DBConnection.getInstance().getConnection();
@@ -426,5 +427,29 @@ public class PersonDAO {
             e.printStackTrace();
         }
         throw new IllegalArgumentException("Person not found with mobile: " + mobile);
+    }
+
+    public Person findPersonById(int id) {
+        String type = getTypeFromDatabaseById(id); // New helper method to get type by ID
+        PersonRepository repository = repositories.get(type);
+        if (repository == null) {
+            throw new IllegalArgumentException("Unsupported person type: " + type);
+        }
+        return repository.findById(id);
+    }
+
+    private String getTypeFromDatabaseById(int id) {
+        String sql = "SELECT type FROM person WHERE id = ?";
+        try (Connection connection = DBConnection.getInstance().getConnection();
+             PreparedStatement statement = connection.prepareStatement(sql)) {
+            statement.setInt(1, id);
+            ResultSet resultSet = statement.executeQuery();
+            if (resultSet.next()) {
+                return resultSet.getString("type");
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        throw new IllegalArgumentException("Person not found with ID: " + id);
     }
 }

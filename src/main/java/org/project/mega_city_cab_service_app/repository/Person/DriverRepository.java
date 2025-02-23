@@ -123,6 +123,64 @@ public class DriverRepository implements PersonRepository {
         }
         return null;
     }
+    @Override
+    public Person findById(int id) {
+        String personSql = "SELECT * FROM person WHERE id = ?";
+        String employeeSql = "SELECT * FROM employee WHERE id = ?";
+        String driverSql = "SELECT * FROM driver WHERE id = ?";
+
+        try (Connection connection = dbConnection.getConnection();
+             PreparedStatement personStatement = connection.prepareStatement(personSql);
+             PreparedStatement employeeStatement = connection.prepareStatement(employeeSql);
+             PreparedStatement driverStatement = connection.prepareStatement(driverSql)) {
+
+            // Retrieve from the `person` table
+            personStatement.setInt(1, id);
+            ResultSet personResultSet = personStatement.executeQuery();
+
+            if (!personResultSet.next()) {
+                return null; // No person found
+            }
+
+            // Extract data from the `person` table
+            String name = personResultSet.getString("name");
+            String address = personResultSet.getString("address");
+            String mobile = personResultSet.getString("mobile");
+            String username = personResultSet.getString("username");
+            String password = personResultSet.getString("password");
+
+            // Retrieve from the `employee` table
+            employeeStatement.setInt(1, id);
+            ResultSet employeeResultSet = employeeStatement.executeQuery();
+
+            if (!employeeResultSet.next()) {
+                return null; // No employee found
+            }
+
+            // Extract data from the `employee` table
+            double salary = employeeResultSet.getDouble("salary");
+            int experience = employeeResultSet.getInt("experience");
+
+            // Retrieve from the `driver` table
+            driverStatement.setInt(1, id);
+            ResultSet driverResultSet = driverStatement.executeQuery();
+
+            if (!driverResultSet.next()) {
+                return null; // No driver found
+            }
+
+            // Extract data from the `driver` table
+            String licenseNumber = driverResultSet.getString("license_number");
+            String licenseType = driverResultSet.getString("license_type");
+
+            // Create and return a new Driver object
+            return new Driver(name, address, mobile, username, password, salary, experience, licenseNumber, licenseType);
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
 
     @Override
     public boolean update(String originalMobile, Person updatedPerson) {

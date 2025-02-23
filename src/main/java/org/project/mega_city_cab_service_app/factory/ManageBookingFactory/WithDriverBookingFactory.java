@@ -21,7 +21,10 @@ public class WithDriverBookingFactory implements GenericFactory<Booking> {
         LocalDateTime pickupTime = LocalDateTime.parse(JsonUtils.extractValueFromJson(jsonInput, "pickup_time"));
         LocalDateTime returnTime = LocalDateTime.parse(JsonUtils.extractValueFromJson(jsonInput, "return_time"));
         int daysNeeded = Integer.parseInt(JsonUtils.extractValueFromJson(jsonInput, "days_needed"));
+        int tax_id=Integer.parseInt(JsonUtils.extractValueFromJson(jsonInput,"tax_id"));
+        int employee_id=Integer.parseInt(JsonUtils.extractValueFromJson(jsonInput,"employee_id"));
+        int package_id=Integer.parseInt(JsonUtils.extractValueFromJson(jsonInput,"package_id"));
 
-        return new Booking(customerId, pickupLocation, dropLocation, bookingType, vehicleId, driverId, initialKm, finalKm, pickupTime, returnTime, daysNeeded);
+        return new Booking(customerId, pickupLocation, dropLocation, bookingType, vehicleId, driverId, initialKm, finalKm, pickupTime, returnTime, daysNeeded,tax_id,employee_id,package_id);
     }
 }

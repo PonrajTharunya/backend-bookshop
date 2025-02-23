@@ -48,4 +48,8 @@
             return personDAO.deletePerson(mobile);
         }
 
+        public Person getPersonById(int id) {
+            return personDAO.findPersonById(id);
+        }
+
     }

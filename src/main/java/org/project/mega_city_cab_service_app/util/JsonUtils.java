@@ -218,8 +218,17 @@ import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
 
+import org.project.mega_city_cab_service_app.model.Parent.Vehicle;
+import org.project.mega_city_cab_service_app.model.PlanPrice.PlanPrice;
 import org.project.mega_city_cab_service_app.model.Range.DistanceRange;
 import org.project.mega_city_cab_service_app.model.VehiclePlan;
+import org.project.mega_city_cab_service_app.model.booking.Booking;
+import org.project.mega_city_cab_service_app.model.person.Customer;
+import org.project.mega_city_cab_service_app.model.person.Driver;
+import org.project.mega_city_cab_service_app.model.person.Employee;
+import org.project.mega_city_cab_service_app.model.tax.Tax;
+import org.project.mega_city_cab_service_app.model.vehical.PremiumVehicle;
+import org.project.mega_city_cab_service_app.model.vehical.VIPVehicle;
 
 
 public class JsonUtils {
@@ -313,10 +322,183 @@ public class JsonUtils {
             return "{\"id\": " + distanceRange.getId() +
                     ", \"minDistance\": " + distanceRange.getMinDistance() +
                     ", \"maxDistance\": " + distanceRange.getMaxDistance() + "}";
-        } else {
+        }else if (obj instanceof PlanPrice) {
+            PlanPrice planPrice = (PlanPrice) obj;
+            return "{\"id\": " + planPrice.getId() +
+                    ", \"distanceRangeId\": " + planPrice.getDistanceRangeId() +
+                    ", \"price\": " + planPrice.getPrice() +
+                    ", \"extraKmPrice\": " + planPrice.getExtraKmPrice() +
+                    ", \"discount\": " + planPrice.getDiscount() +
+                    ", \"vehiclePlanId\": " + planPrice.getVehiclePlanId() + "}";
+        }else if (obj instanceof Booking) {
+            return bookingToJson((Booking) obj);
+        } else if (obj instanceof Tax) {
+            return taxToJson((Tax) obj);
+        }else if (obj instanceof Customer) {
+            return customerToJson((Customer) obj);
+        } else if (obj instanceof Driver) {
+            return driverToJson((Driver) obj);
+        } else if (obj instanceof Employee) {
+            return employeeToJson((Employee) obj);
+        }
+
+        else {
             return "{}"; // Unsupported object type
         }
     }
+
+    /**
+     * Converts a Booking object to a JSON string.
+     *
+     * @param booking The Booking object to serialize.
+     * @return A JSON representation of the Booking object.
+     */
+    private static String bookingToJson(Booking booking) {
+        Tax tax = booking.getTax();
+        String taxJson = tax != null ? taxToJson(tax) : "null";
+
+        Customer customer = booking.getCustomer();
+        String customerJson = customer != null ? toJson(customer) : "null";
+
+        Driver driver = booking.getDriver();
+        String driverJson = driver != null ? toJson(driver) : "null";
+
+        Employee employee = booking.getEmployee();
+        String employeeJson = employee != null ? toJson(employee) : "null";
+
+        VehiclePlan vehiclePlan = booking.getVehiclePlan();
+        String vehiclePlanJson = vehiclePlan != null ? toJson(vehiclePlan) : "null";
+
+        DistanceRange distanceRange = booking.getDistanceRange();
+        String distanceRangeJson = distanceRange != null ? toJson(distanceRange) : "null";
+
+        PlanPrice planPrice = booking.getPlanPrice();
+        String planPriceJson = planPrice != null ? toJson(planPrice) : "null";
+
+        Vehicle vehicle = booking.getVehicle();
+        String vehicleJson = "{}";
+        if (vehicle != null) {
+            vehicleJson = "{" +
+                    "\"id\": " + vehicle.getId() +
+                    ", \"name\": \"" + escapeJsonString(vehicle.getName()) + "\"" +
+                    ", \"model\": \"" + escapeJsonString(vehicle.getModel()) + "\"" +
+                    ", \"color\": \"" + escapeJsonString(vehicle.getColor()) + "\"" +
+                    ", \"year\": " + vehicle.getYear() +
+                    ", \"registration_number\": " + vehicle.getRegistrationNumber() +
+                    ", \"seating_capacity\": " + vehicle.getSeatingCapacity() +
+                    ", \"type\": \"" + vehicle.getType() + "\"";
+
+            // Add type-specific fields
+            if (vehicle instanceof PremiumVehicle premiumVehicle) {
+                vehicleJson += ", \"has_wifi\": " + premiumVehicle.hasWiFi();
+            } else if (vehicle instanceof VIPVehicle vipVehicle) {
+                vehicleJson += ", \"has_chauffeur_service\": " + vipVehicle.hasChauffeurService();
+            }
+
+            vehicleJson += "}";
+        }
+
+        return "{" +
+                "\"order_no\": " + booking.getOrderNo() +
+                ", \"customer_id\": " + booking.getCustomerId() +
+                ", \"customer\": " + customerJson +
+                ", \"pickup_location\": \"" + escapeJsonString(booking.getPickupLocation()) + "\"" +
+                ", \"drop_location\": \"" + escapeJsonString(booking.getDropLocation()) + "\"" +
+                ", \"booking_type\": \"" + escapeJsonString(booking.getBookingType()) + "\"" +
+                ", \"vehicle_id\": " + booking.getVehicleId() +
+                ", \"vehicle\": " + vehicleJson +
+                ", \"driver_id\": " + booking.getDriverId() +
+                ", \"driver\": " + driverJson +
+                ", \"initial_km\": " + booking.getInitialKm() +
+                ", \"final_km\": " + booking.getFinalKm() +
+                ", \"pickup_time\": \"" + booking.getPickupTime() + "\"" +
+                ", \"return_time\": \"" + booking.getReturnTime() + "\"" +
+                ", \"days_needed\": " + booking.getDaysNeeded() +
+                ", \"tax_id\": " + booking.getTax_id() +
+                ", \"tax\": " + taxJson +
+                ", \"employee_id\": " + booking.getEmployee_id() +
+                ", \"employee\": " + employeeJson +
+                ", \"package_id\": " + booking.getPackage_id() +
+                ", \"vehicle_plan\": " + vehiclePlanJson +
+                ", \"distance_range\": " + distanceRangeJson +
+                ", \"plan_price\": " + planPriceJson +
+
+                "}";
+    }
+
+    /**
+     * Converts a Tax object to a JSON string.
+     *
+     * @param tax The Tax object to serialize.
+     * @return A JSON representation of the Tax object.
+     */
+
+    private static String taxToJson(Tax tax) {
+        return "{" +
+                "\"taxId\": " + tax.getTaxId() +
+                ", \"description\": \"" + escapeJsonString(tax.getDescription()) + "\"" +
+                ", \"taxRate\": " + tax.getTaxRate() +
+                ", \"status\": " + tax.isStatus() +
+                "}";
+    }
+
+    /**
+     * Converts a Customer object to a JSON string.
+     *
+     * @param customer The Customer object to serialize.
+     * @return A JSON representation of the Customer object.
+     */
+    private static String customerToJson(Customer customer) {
+        return "{" +
+                "\"id\": " + customer.getId() +
+                ", \"name\": \"" + escapeJsonString(customer.getName()) + "\"" +
+                ", \"address\": \"" + escapeJsonString(customer.getAddress()) + "\"" +
+                ", \"mobile\": \"" + escapeJsonString(customer.getMobile()) + "\"" +
+                ", \"rating\": " + customer.getRating() +
+                ", \"description\": \"" + escapeJsonString(customer.getDescription()) + "\"" +
+                "}";
+    }
+
+    /**
+     * Converts a Driver object to a JSON string.
+     *
+     * @param driver The Driver object to serialize.
+     * @return A JSON representation of the Driver object.
+     */
+    private static String driverToJson(Driver driver) {
+        return "{" +
+                "\"id\": " + driver.getId() +
+                ", \"name\": \"" + escapeJsonString(driver.getName()) + "\"" +
+                ", \"address\": \"" + escapeJsonString(driver.getAddress()) + "\"" +
+                ", \"mobile\": \"" + escapeJsonString(driver.getMobile()) + "\"" +
+                ", \"license_number\": \"" + escapeJsonString(driver.getLicenseNumber()) + "\"" +
+                ", \"license_type\": \"" + escapeJsonString(driver.getLicenseType()) + "\"" +
+                ", \"salary\": " + driver.getSalary() +
+                ", \"experience\": " + driver.getExperience() +
+                "}";
+    }
+
+    /**
+     * Converts an Employee object to a JSON string.
+     *
+     * @param employee The Employee object to serialize.
+     * @return A JSON representation of the Employee object.
+     */
+    private static String employeeToJson(Employee employee) {
+        return "{" +
+                "\"id\": " + employee.getId() +
+                ", \"name\": \"" + escapeJsonString(employee.getName()) + "\"" +
+                ", \"address\": \"" + escapeJsonString(employee.getAddress()) + "\"" +
+                ", \"mobile\": \"" + escapeJsonString(employee.getMobile()) + "\"" +
+                ", \"salary\": " + employee.getSalary() +
+                ", \"experience\": " + employee.getExperience() +
+                "}";
+    }
+
+
+
+
+
 
     /**
      * Escapes special characters in a JSON string.
@@ -334,6 +516,7 @@ public class JsonUtils {
                 .replace("\r", "\\r")
                 .replace("\t", "\\t");
     }
+
 }
 
 
