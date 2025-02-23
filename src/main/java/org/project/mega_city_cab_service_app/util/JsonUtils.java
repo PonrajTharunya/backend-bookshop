@@ -216,23 +216,27 @@ package org.project.mega_city_cab_service_app.util;
 
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.project.mega_city_cab_service_app.model.Parent.Vehicle;
 import org.project.mega_city_cab_service_app.model.PlanPrice.PlanPrice;
 import org.project.mega_city_cab_service_app.model.Range.DistanceRange;
 import org.project.mega_city_cab_service_app.model.VehiclePlan;
 import org.project.mega_city_cab_service_app.model.booking.Booking;
+import org.project.mega_city_cab_service_app.model.calculaterent.FinalAmountResponse;
 import org.project.mega_city_cab_service_app.model.person.Customer;
 import org.project.mega_city_cab_service_app.model.person.Driver;
 import org.project.mega_city_cab_service_app.model.person.Employee;
 import org.project.mega_city_cab_service_app.model.tax.Tax;
 import org.project.mega_city_cab_service_app.model.vehical.PremiumVehicle;
 import org.project.mega_city_cab_service_app.model.vehical.VIPVehicle;
+import org.project.mega_city_cab_service_app.service.BaseBookingCalculatorService.BookingCalculateService;
 
 
 public class JsonUtils {
-
+    private static final Map<Object, Boolean> seenObjects = new HashMap<>();
     /**
      * Extracts the value of a specific key from a JSON string.
      *
@@ -302,48 +306,62 @@ public class JsonUtils {
      * @return A JSON representation of the object.
      */
     public static String toJson(Object obj) {
-        if (obj instanceof List<?>) {
-            List<?> list = (List<?>) obj;
-            StringBuilder json = new StringBuilder("[");
-            for (Object item : list) {
-                json.append(toJson(item)).append(",");
-            }
-            if (!list.isEmpty()) {
-                json.deleteCharAt(json.length() - 1); // Remove trailing comma
-            }
-            json.append("]");
-            return json.toString();
-        } else if (obj instanceof VehiclePlan) {
-            VehiclePlan vehiclePlan = (VehiclePlan) obj;
-            return "{\"id\": " + vehiclePlan.getId() +
-                    ", \"planName\": \"" + escapeJsonString(vehiclePlan.getPlanName()) + "\"}";
-        } else if (obj instanceof DistanceRange) {
-            DistanceRange distanceRange = (DistanceRange) obj;
-            return "{\"id\": " + distanceRange.getId() +
-                    ", \"minDistance\": " + distanceRange.getMinDistance() +
-                    ", \"maxDistance\": " + distanceRange.getMaxDistance() + "}";
-        }else if (obj instanceof PlanPrice) {
-            PlanPrice planPrice = (PlanPrice) obj;
-            return "{\"id\": " + planPrice.getId() +
-                    ", \"distanceRangeId\": " + planPrice.getDistanceRangeId() +
-                    ", \"price\": " + planPrice.getPrice() +
-                    ", \"extraKmPrice\": " + planPrice.getExtraKmPrice() +
-                    ", \"discount\": " + planPrice.getDiscount() +
-                    ", \"vehiclePlanId\": " + planPrice.getVehiclePlanId() + "}";
-        }else if (obj instanceof Booking) {
-            return bookingToJson((Booking) obj);
-        } else if (obj instanceof Tax) {
-            return taxToJson((Tax) obj);
-        }else if (obj instanceof Customer) {
-            return customerToJson((Customer) obj);
-        } else if (obj instanceof Driver) {
-            return driverToJson((Driver) obj);
-        } else if (obj instanceof Employee) {
-            return employeeToJson((Employee) obj);
+        if (obj == null) {
+            return "null";
         }
 
-        else {
-            return "{}"; // Unsupported object type
+        // Prevent infinite recursion for circular references
+        if (seenObjects.containsKey(obj)) {
+            return "{\"$ref\": \"circular\"}";
+        }
+        seenObjects.put(obj, true);
+
+        try {
+            if (obj instanceof List<?>) {
+                List<?> list = (List<?>) obj;
+                StringBuilder json = new StringBuilder("[");
+                for (Object item : list) {
+                    json.append(toJson(item)).append(",");
+                }
+                if (!list.isEmpty()) {
+                    json.deleteCharAt(json.length() - 1); // Remove trailing comma
+                }
+                json.append("]");
+                return json.toString();
+            } else if (obj instanceof VehiclePlan) {
+                VehiclePlan vehiclePlan = (VehiclePlan) obj;
+                return "{\"id\": " + vehiclePlan.getId() +
+                        ", \"planName\": \"" + escapeJsonString(vehiclePlan.getPlanName()) + "\"}";
+            } else if (obj instanceof DistanceRange) {
+                DistanceRange distanceRange = (DistanceRange) obj;
+                return "{\"id\": " + distanceRange.getId() +
+                        ", \"minDistance\": " + distanceRange.getMinDistance() +
+                        ", \"maxDistance\": " + distanceRange.getMaxDistance() + "}";
+            } else if (obj instanceof PlanPrice) {
+                PlanPrice planPrice = (PlanPrice) obj;
+                return "{\"id\": " + planPrice.getId() +
+                        ", \"distanceRangeId\": " + planPrice.getDistanceRangeId() +
+                        ", \"price\": " + planPrice.getPrice() +
+                        ", \"extraKmPrice\": " + planPrice.getExtraKmPrice() +
+                        ", \"discount\": " + planPrice.getDiscount() +
+                        ", \"vehiclePlanId\": " + planPrice.getVehiclePlanId() + "}";
+            } else if (obj instanceof Booking) {
+                return bookingToJson((Booking) obj);
+            } else if (obj instanceof Tax) {
+                return taxToJson((Tax) obj);
+            } else if (obj instanceof Customer) {
+                return customerToJson((Customer) obj);
+            } else if (obj instanceof Driver) {
+                return driverToJson((Driver) obj);
+            } else if (obj instanceof Employee) {
+                return employeeToJson((Employee) obj);
+            } else if (obj instanceof FinalAmountResponse response) {
+                return finalAmountResponseToJson(response);
+            }
+            // Unsupported object type
+            return "{}";
+        } finally {
+            seenObjects.remove(obj); // Clean up after serialization
         }
     }
 
@@ -426,13 +444,18 @@ public class JsonUtils {
                 "}";
     }
 
-    /**
-     * Converts a Tax object to a JSON string.
-     *
-     * @param tax The Tax object to serialize.
-     * @return A JSON representation of the Tax object.
-     */
-
+//    /**
+//     * Converts a Tax object to a JSON string.
+//     *
+//     * @param  response Tax object to serialize.
+//     * @return A JSON representation of the Tax object.
+//     */
+//    private static String finalAmountResponseToJson(BookingCalculateService.FinalAmountResponse response) {
+//        return "{" +
+//                "\"orderId\": " + response.getOrderId() +
+//                ", \"finalAmount\": " + response.getFinalAmount() +
+//                "}";
+//    }
     private static String taxToJson(Tax tax) {
         return "{" +
                 "\"taxId\": " + tax.getTaxId() +
@@ -477,7 +500,6 @@ public class JsonUtils {
                 ", \"experience\": " + driver.getExperience() +
                 "}";
     }
-
     /**
      * Converts an Employee object to a JSON string.
      *
@@ -495,6 +517,21 @@ public class JsonUtils {
                 "}";
     }
 
+    private static String finalAmountResponseToJson(FinalAmountResponse response) {
+        return "{" +
+                "\"orderId\": " + response.getOrderId() +
+                ", \"finalAmount\": " + response.getFinalAmount() +
+                ", \"distanceUsed\": \"" + escapeJsonString(response.getDistanceUsed()) + "\"" +
+                ", \"basePrice\": \"" + escapeJsonString(response.getBasePrice()) + "\"" +
+                ", \"extraKilometers\": \"" + escapeJsonString(response.getExtraKilometers()) + "\"" +
+                ", \"totalCostBeforeDiscount\": \"" + escapeJsonString(response.getTotalCostBeforeDiscount()) + "\"" +
+                ", \"discount\": \"" + escapeJsonString(response.getDiscount()) + "\"" +
+                ", \"totalCostAfterDiscount\": \"" + escapeJsonString(response.getTotalCostAfterDiscount()) + "\"" +
+                ", \"tax\": \"" + escapeJsonString(response.getTax()) + "\"" +
+                ", \"calculationBreakdown\": \"" + escapeJsonString(response.getCalculationBreakdown()) + "\"" +
+                ", \"driverFee\": \"" + escapeJsonString(response.getDriverFee()) + "\"" +
+                "}";
+    }
 
 
 
