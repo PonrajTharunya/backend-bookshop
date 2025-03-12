@@ -5,6 +5,8 @@ import org.project.mega_city_cab_service_app.model.Parent.Person;
 import org.project.mega_city_cab_service_app.util.DBConnection;
 
 import java.sql.*;
+import java.util.ArrayList;
+import java.util.List;
 
 public class EmployeeRepository implements PersonRepository {
     private final DBConnection dbConnection;
@@ -142,6 +144,43 @@ public class EmployeeRepository implements PersonRepository {
             e.printStackTrace();
         }
         return null;
+    }
+    @Override
+    public List<Person> findAll() {
+        List<Person> employees = new ArrayList<>();
+        String personSql = "SELECT * FROM person WHERE type = 'EMPLOYEE'";
+        String employeeSql = "SELECT * FROM employee WHERE id = ?";
+
+        try (Connection connection = dbConnection.getConnection();
+             PreparedStatement personStatement = connection.prepareStatement(personSql)) {
+
+            ResultSet personResultSet = personStatement.executeQuery();
+
+            while (personResultSet.next()) {
+                int id = personResultSet.getInt("id");
+                String name = personResultSet.getString("name");
+                String address = personResultSet.getString("address");
+                String mobile = personResultSet.getString("mobile");
+                String username = personResultSet.getString("username");
+                String password = personResultSet.getString("password");
+
+                try (PreparedStatement employeeStatement = connection.prepareStatement(employeeSql)) {
+                    employeeStatement.setInt(1, id);
+                    ResultSet employeeResultSet = employeeStatement.executeQuery();
+
+                    if (employeeResultSet.next()) {
+                        double salary = employeeResultSet.getDouble("salary");
+                        int experience = employeeResultSet.getInt("experience");
+
+                        employees.add(new Employee(name, address, mobile, username, password, salary, experience));
+                    }
+                }
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+        return employees;
     }
     @Override
     public boolean update(String originalMobile, Person updatedPerson) {

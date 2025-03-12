@@ -1,4 +1,4 @@
-package org.project.mega_city_cab_service_app.controller;
+package org.project.mega_city_cab_service_app.controller.DistanceRange;
 
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;

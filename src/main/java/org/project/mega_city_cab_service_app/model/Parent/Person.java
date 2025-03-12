@@ -23,7 +23,6 @@ public abstract class Person {
 
     // Getter and Setter for ID
 
-
     public void setId(int id) {
         this.id = id;
     }

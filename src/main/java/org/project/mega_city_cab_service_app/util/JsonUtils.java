@@ -223,7 +223,7 @@ import java.util.Map;
 import org.project.mega_city_cab_service_app.model.Parent.Vehicle;
 import org.project.mega_city_cab_service_app.model.PlanPrice.PlanPrice;
 import org.project.mega_city_cab_service_app.model.Range.DistanceRange;
-import org.project.mega_city_cab_service_app.model.VehiclePlan;
+import org.project.mega_city_cab_service_app.model.Plan.VehiclePlan;
 import org.project.mega_city_cab_service_app.model.booking.Booking;
 import org.project.mega_city_cab_service_app.model.calculaterent.FinalAmountResponse;
 import org.project.mega_city_cab_service_app.model.person.Customer;
@@ -465,6 +465,8 @@ public class JsonUtils {
                 "}";
     }
 
+
+
     /**
      * Converts a Customer object to a JSON string.
      *
@@ -532,8 +534,25 @@ public class JsonUtils {
                 ", \"driverFee\": \"" + escapeJsonString(response.getDriverFee()) + "\"" +
                 "}";
     }
-
-
+    public static String bookingToJsonn(Booking booking) {
+        return "{" +
+                "\"order_no\": " + booking.getOrderNo() +
+                ", \"customer_id\": " + booking.getCustomerId() +
+                ", \"pickup_location\": \"" + escapeJsonString(booking.getPickupLocation()) + "\"" +
+                ", \"drop_location\": \"" + escapeJsonString(booking.getDropLocation()) + "\"" +
+                ", \"booking_type\": \"" + escapeJsonString(booking.getBookingType()) + "\"" +
+                ", \"vehicle_id\": " + booking.getVehicleId() +
+                ", \"driver_id\": " + (booking.getDriverId() != null ? booking.getDriverId() : "null") +
+                ", \"initial_km\": " + booking.getInitialKm() +
+                ", \"final_km\": " + booking.getFinalKm() +
+                ", \"pickup_time\": \"" + booking.getPickupTime() + "\"" +
+                ", \"return_time\": \"" + booking.getReturnTime() + "\"" +
+                ", \"days_needed\": " + booking.getDaysNeeded() +
+                ", \"tax_id\": " + booking.getTax_id() +
+                ", \"employee_id\": " + booking.getEmployee_id() +
+                ", \"package_id\": " + booking.getPackage_id() +
+                "}";
+    }
 
 
 
@@ -543,6 +562,9 @@ public class JsonUtils {
      * @param str The string to escape.
      * @return The escaped string.
      */
+
+
+
     private static String escapeJsonString(String str) {
         if (str == null) {
             return "";

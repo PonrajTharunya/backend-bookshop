@@ -365,11 +365,16 @@ import org.project.mega_city_cab_service_app.util.DBConnection;
 
 import java.sql.*;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 public class PersonDAO {
     private final Map<String, PersonRepository> repositories;
 
+    // Constructor for testing (accepts a map of repositories)
+    public PersonDAO(Map<String, PersonRepository> repositories) {
+        this.repositories = repositories;
+    }
     public PersonDAO(DBConnection dbConnection) {
         this.repositories = new HashMap<>();
         repositories.put("ADMIN", new AdminRepository(dbConnection));
@@ -436,6 +441,13 @@ public class PersonDAO {
             throw new IllegalArgumentException("Unsupported person type: " + type);
         }
         return repository.findById(id);
+    }
+    public List<Person> findAllByType(String type) {
+        PersonRepository repository = repositories.get(type);
+        if (repository == null) {
+            throw new IllegalArgumentException("Unsupported person type: " + type);
+        }
+        return repository.findAll();
     }
 
     private String getTypeFromDatabaseById(int id) {

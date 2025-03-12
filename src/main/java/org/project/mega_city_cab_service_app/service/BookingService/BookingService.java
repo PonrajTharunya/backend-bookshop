@@ -3,6 +3,8 @@ package org.project.mega_city_cab_service_app.service.BookingService;
 import org.project.mega_city_cab_service_app.dao.BookingDAO;
 import org.project.mega_city_cab_service_app.model.booking.Booking;
 
+import java.util.List;
+
 public class BookingService {
     private final BookingDAO bookingDAO;
 
@@ -26,6 +28,10 @@ public class BookingService {
         // Add any additional business logic here (e.g., validation)
         return bookingDAO.updateBooking(booking);
     }
+    public List<Booking> getAllBookings() {
+        return bookingDAO.getAllBookings();
+    }
+
 
     // Delete a booking by its order number
     public boolean deleteBooking(int orderNo) {

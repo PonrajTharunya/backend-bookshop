@@ -6,6 +6,8 @@ import org.project.mega_city_cab_service_app.model.person.Customer;
 import org.project.mega_city_cab_service_app.util.DBConnection;
 
 import java.sql.*;
+import java.util.ArrayList;
+import java.util.List;
 
 public class AdminRepository implements PersonRepository {
     private final DBConnection dbConnection;
@@ -96,7 +98,31 @@ public class AdminRepository implements PersonRepository {
         }
         return null;
     }
+    @Override
+    public List<Person> findAll() {
+        List<Person> admins = new ArrayList<>();
+        String sql = "SELECT * FROM person WHERE type = 'ADMIN'";
 
+        try (Connection connection = dbConnection.getConnection();
+             PreparedStatement statement = connection.prepareStatement(sql)) {
+
+            ResultSet resultSet = statement.executeQuery();
+
+            while (resultSet.next()) {
+                String name = resultSet.getString("name");
+                String address = resultSet.getString("address");
+                String mobile = resultSet.getString("mobile");
+                String username = resultSet.getString("username");
+                String password = resultSet.getString("password");
+
+                admins.add(new Admin(name, address, mobile, username, password));
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+        return admins;
+    }
 
     @Override
     public boolean update(String originalMobile, Person updatedPerson) {

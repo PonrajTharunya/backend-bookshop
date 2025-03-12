@@ -2,6 +2,8 @@
     import org.project.mega_city_cab_service_app.dao.PersonDAO;
     import org.project.mega_city_cab_service_app.model.Parent.Person;
 
+    import java.util.List;
+
     //focus on business logic and orchestration
     public class PersonService {
         private final PersonDAO personDAO;
@@ -46,6 +48,10 @@
         public boolean deletePerson(String mobile) {
 
             return personDAO.deletePerson(mobile);
+        }
+
+        public List<Person> getAllPersonsByType(String type) {
+            return personDAO.findAllByType(type);
         }
 
         public Person getPersonById(int id) {

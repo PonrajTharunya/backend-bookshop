@@ -54,15 +54,19 @@ public class BookingServlet extends HttpServlet {
             AuthorizationService.checkRole(req, "CUSTOMER", "ADMIN");
 
             resp.setContentType("application/json");
-            String orderNoStr = req.getParameter("order_no");
-            if (orderNoStr == null || orderNoStr.isEmpty()) {
-                resp.getWriter().write("{\"error\": \"Order number is required.\"}");
-                return;
-            }
 
-            int orderNo = Integer.parseInt(orderNoStr);
-            String response = retrievalService.getBooking(orderNo);
-            resp.getWriter().write(response);
+            // Check if the request is for a specific booking or all bookings
+            String orderNoStr = req.getParameter("order_no");
+            if (orderNoStr != null && !orderNoStr.isEmpty()) {
+                // Retrieve a single booking by order number
+                int orderNo = Integer.parseInt(orderNoStr);
+                String response = retrievalService.getBooking(orderNo);
+                resp.getWriter().write(response);
+            } else {
+                // Retrieve all bookings
+                String response = retrievalService.getAllBookings();
+                resp.getWriter().write(response);
+            }
         } catch (AccessDeniedException e) {
             resp.sendError(HttpServletResponse.SC_FORBIDDEN, e.getMessage());
         } catch (NumberFormatException e) {

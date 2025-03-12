@@ -1,4 +1,4 @@
-package org.project.mega_city_cab_service_app.model;
+package org.project.mega_city_cab_service_app.model.Plan;
 
 public class VehiclePlan {
     private int id; // Primary key (auto-generated)

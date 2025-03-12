@@ -17,4 +17,4 @@ public class PersonFactoryRegistry {
     public static void clear() {
         registry.clear();
     }
-}
+} 

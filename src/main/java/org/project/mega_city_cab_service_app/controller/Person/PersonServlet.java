@@ -281,44 +281,84 @@
             }
         }
 
-        @Override
-        protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+//        @Override
+//        protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+//            try {
+//                // Ensure only authorized users can access
+//                AuthorizationService.checkRole(req, "ADMIN");
+//
+//                resp.setContentType("application/json");
+//
+//                // Check if 'id' parameter is provided
+//                String idParam = req.getParameter("id");
+//                if (idParam != null && !idParam.isEmpty()) {
+//                    try {
+//                        int id = Integer.parseInt(idParam);
+//                        String response = retrievalService.getPersonById(id);
+//                        resp.getWriter().write(response);
+//                        return;
+//                    } catch (NumberFormatException e) {
+//                        resp.getWriter().write("{\"error\": \"Invalid ID format.\"}");
+//                        return;
+//                    }
+//                }
+//
+//                // Check if 'mobile' parameter is provided
+//                String mobile = req.getParameter("mobile");
+//                if (mobile != null && !mobile.isEmpty()) {
+//                    String response = retrievalService.getPerson(mobile);
+//                    resp.getWriter().write(response);
+//                    return;
+//                }
+//
+//                // If neither 'id' nor 'mobile' is provided, return an error
+//                resp.getWriter().write("{\"error\": \"Either 'id' or 'mobile' parameter is required.\"}");
+//
+//            } catch (AccessDeniedException e) {
+//                resp.sendError(HttpServletResponse.SC_FORBIDDEN, e.getMessage());
+//            }
+//        }
+protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+    try {
+        AuthorizationService.checkRole(req, "ADMIN");
+
+        resp.setContentType("application/json");
+
+        // Check if 'type' parameter is provided
+        String type = req.getParameter("type");
+        if (type != null && !type.isEmpty()) {
+            String response = retrievalService.getAllPersonsByType(type);
+            resp.getWriter().write(response);
+            return;
+        }
+
+        // Existing logic for 'id' and 'mobile'
+        String idParam = req.getParameter("id");
+        if (idParam != null && !idParam.isEmpty()) {
             try {
-                // Ensure only authorized users can access
-                AuthorizationService.checkRole(req, "ADMIN");
-
-                resp.setContentType("application/json");
-
-                // Check if 'id' parameter is provided
-                String idParam = req.getParameter("id");
-                if (idParam != null && !idParam.isEmpty()) {
-                    try {
-                        int id = Integer.parseInt(idParam);
-                        String response = retrievalService.getPersonById(id);
-                        resp.getWriter().write(response);
-                        return;
-                    } catch (NumberFormatException e) {
-                        resp.getWriter().write("{\"error\": \"Invalid ID format.\"}");
-                        return;
-                    }
-                }
-
-                // Check if 'mobile' parameter is provided
-                String mobile = req.getParameter("mobile");
-                if (mobile != null && !mobile.isEmpty()) {
-                    String response = retrievalService.getPerson(mobile);
-                    resp.getWriter().write(response);
-                    return;
-                }
-
-                // If neither 'id' nor 'mobile' is provided, return an error
-                resp.getWriter().write("{\"error\": \"Either 'id' or 'mobile' parameter is required.\"}");
-
-            } catch (AccessDeniedException e) {
-                resp.sendError(HttpServletResponse.SC_FORBIDDEN, e.getMessage());
+                int id = Integer.parseInt(idParam);
+                String response = retrievalService.getPersonById(id);
+                resp.getWriter().write(response);
+                return;
+            } catch (NumberFormatException e) {
+                resp.getWriter().write("{\"error\": \"Invalid ID format.\"}");
+                return;
             }
         }
 
+        String mobile = req.getParameter("mobile");
+        if (mobile != null && !mobile.isEmpty()) {
+            String response = retrievalService.getPerson(mobile);
+            resp.getWriter().write(response);
+            return;
+        }
+
+        resp.getWriter().write("{\"error\": \"Either 'id', 'mobile', or 'type' parameter is required.\"}");
+
+    } catch (AccessDeniedException e) {
+        resp.sendError(HttpServletResponse.SC_FORBIDDEN, e.getMessage());
+    }
+}
         @Override
         protected void doPut(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
             try{

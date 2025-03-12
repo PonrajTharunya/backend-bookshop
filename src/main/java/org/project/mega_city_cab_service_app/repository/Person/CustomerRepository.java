@@ -5,6 +5,8 @@
     import org.project.mega_city_cab_service_app.util.DBConnection;
 
     import java.sql.*;
+    import java.util.ArrayList;
+    import java.util.List;
 
     public class CustomerRepository implements PersonRepository {
         private final DBConnection dbConnection;
@@ -194,7 +196,43 @@
                 resetAutoCommit(connection);
             }
         }
+        @Override
+        public List<Person> findAll() {
+            List<Person> customers = new ArrayList<>();
+            String personSql = "SELECT * FROM person WHERE type = 'CUSTOMER'";
+            String customerSql = "SELECT * FROM customer WHERE id = ?";
 
+            try (Connection connection = dbConnection.getConnection();
+                 PreparedStatement personStatement = connection.prepareStatement(personSql)) {
+
+                ResultSet personResultSet = personStatement.executeQuery();
+
+                while (personResultSet.next()) {
+                    int id = personResultSet.getInt("id");
+                    String name = personResultSet.getString("name");
+                    String address = personResultSet.getString("address");
+                    String mobile = personResultSet.getString("mobile");
+                    String username = personResultSet.getString("username");
+                    String password = personResultSet.getString("password");
+
+                    try (PreparedStatement customerStatement = connection.prepareStatement(customerSql)) {
+                        customerStatement.setInt(1, id);
+                        ResultSet customerResultSet = customerStatement.executeQuery();
+
+                        if (customerResultSet.next()) {
+                            int rating = customerResultSet.getInt("rating");
+                            String description = customerResultSet.getString("description");
+
+                            customers.add(new Customer(name, address, mobile, username, password, rating, description));
+                        }
+                    }
+                }
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
+
+            return customers;
+        }
         @Override
         public boolean delete(String mobile) {
             Connection connection = null;

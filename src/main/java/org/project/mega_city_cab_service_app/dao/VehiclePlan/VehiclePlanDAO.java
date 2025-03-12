@@ -1,6 +1,7 @@
 package org.project.mega_city_cab_service_app.dao.VehiclePlan;
 
-import org.project.mega_city_cab_service_app.model.VehiclePlan;
+import org.project.mega_city_cab_service_app.model.Plan.VehiclePlan;
+
 
 import org.project.mega_city_cab_service_app.repository.VehiclePlan.VehiclePlanRepository;
 import org.project.mega_city_cab_service_app.util.DBConnection;

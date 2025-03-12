@@ -1,9 +1,10 @@
 package org.project.mega_city_cab_service_app.model.booking;
 
 import org.project.mega_city_cab_service_app.model.Parent.Vehicle;
+import org.project.mega_city_cab_service_app.model.Plan.VehiclePlan;
 import org.project.mega_city_cab_service_app.model.PlanPrice.PlanPrice;
 import org.project.mega_city_cab_service_app.model.Range.DistanceRange;
-import org.project.mega_city_cab_service_app.model.VehiclePlan;
+import org.project.mega_city_cab_service_app.model.Plan.VehiclePlan;
 import org.project.mega_city_cab_service_app.model.person.Customer;
 import org.project.mega_city_cab_service_app.model.person.Driver;
 import org.project.mega_city_cab_service_app.model.person.Employee;

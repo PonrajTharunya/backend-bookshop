@@ -5,9 +5,10 @@ import org.project.mega_city_cab_service_app.dao.PlanPrice.PlanPriceDAO;
 import org.project.mega_city_cab_service_app.dao.VehiclePlan.VehiclePlanDAO;
 import org.project.mega_city_cab_service_app.model.Parent.Person;
 import org.project.mega_city_cab_service_app.model.Parent.Vehicle;
+import org.project.mega_city_cab_service_app.model.Plan.VehiclePlan;
 import org.project.mega_city_cab_service_app.model.PlanPrice.PlanPrice;
 import org.project.mega_city_cab_service_app.model.Range.DistanceRange;
-import org.project.mega_city_cab_service_app.model.VehiclePlan;
+
 import org.project.mega_city_cab_service_app.model.booking.Booking;
 import org.project.mega_city_cab_service_app.model.person.Customer;
 import org.project.mega_city_cab_service_app.model.person.Employee;
@@ -22,6 +23,8 @@ import org.project.mega_city_cab_service_app.util.DBConnection;
 
 import java.sql.*;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 
 public class BookingDAO {
 
@@ -145,6 +148,41 @@ public class BookingDAO {
             e.printStackTrace();
         }
         return null;
+    }
+    public List<Booking> getAllBookings() {
+        List<Booking> bookings = new ArrayList<>();
+        String sql = "SELECT * FROM booking";
+        try (Connection connection = DBConnection.getInstance().getConnection();
+             PreparedStatement statement = connection.prepareStatement(sql);
+             ResultSet resultSet = statement.executeQuery()) {
+
+            while (resultSet.next()) {
+                int orderNo = resultSet.getInt("order_no");
+                int customerId = resultSet.getInt("customer_id");
+                String pickupLocation = resultSet.getString("pickup_location");
+                String dropLocation = resultSet.getString("drop_location");
+                String bookingType = resultSet.getString("booking_type");
+                int vehicleId = resultSet.getInt("vehicle_id");
+                Integer driverId = resultSet.getObject("driver_id", Integer.class); // Nullable
+                int initialKm = resultSet.getInt("initial_km");
+                int finalKm = resultSet.getInt("final_km");
+                LocalDateTime pickupTime = resultSet.getTimestamp("pickup_time").toLocalDateTime();
+                LocalDateTime returnTime = resultSet.getTimestamp("return_time").toLocalDateTime();
+                int daysNeeded = resultSet.getInt("days_needed");
+                int taxId = resultSet.getInt("tax_id");
+                int employeeId = resultSet.getInt("employee_id");
+                int packageId = resultSet.getInt("package_id");
+
+                Booking booking = new Booking(customerId, pickupLocation, dropLocation, bookingType, vehicleId, driverId,
+                        initialKm, finalKm, pickupTime, returnTime, daysNeeded, taxId, employeeId, packageId);
+                booking.setOrderNo(orderNo);
+
+                bookings.add(booking);
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return bookings;
     }
 
     // Update an existing booking

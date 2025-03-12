@@ -18,11 +18,11 @@ public class CustomerFactory implements PersonFactory {
 //    public Person createPerson(String name, String address, String mobile){
 //        return new Customer(name,address,mobile,rating,description);
 //    }
-    @Override
-    public Person createPerson(String jsonInput, String name, String address, String mobile, String  username ,String password) {
-        int rating = Integer.parseInt(JsonUtils.extractValueFromJson(jsonInput, "rating"));
-        String description = JsonUtils.extractValueFromJson(jsonInput, "description");
-        return new Customer(name, address, mobile, username ,password, rating, description);
-    }
+        @Override
+        public Person createPerson(String jsonInput, String name, String address, String mobile, String  username ,String password) {
+            int rating = Integer.parseInt(JsonUtils.extractValueFromJson(jsonInput, "rating"));
+            String description = JsonUtils.extractValueFromJson(jsonInput, "description");
+            return new Customer(name, address, mobile, username ,password, rating, description);
+        }
 
 }

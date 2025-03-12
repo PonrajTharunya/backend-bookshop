@@ -5,6 +5,8 @@ import org.project.mega_city_cab_service_app.model.Parent.Person;
 import org.project.mega_city_cab_service_app.util.DBConnection;
 
 import java.sql.*;
+import java.util.ArrayList;
+import java.util.List;
 
 public class DriverRepository implements PersonRepository {
     private final DBConnection dbConnection;
@@ -242,6 +244,57 @@ public class DriverRepository implements PersonRepository {
         } finally {
             resetAutoCommit(connection);
         }
+    }
+
+    @Override
+    public List<Person> findAll() {
+        List<Person> drivers = new ArrayList<>();
+        String personSql = "SELECT * FROM person WHERE type = 'DRIVER'";
+        String employeeSql = "SELECT * FROM employee WHERE id = ?";
+        String driverSql = "SELECT * FROM driver WHERE id = ?";
+
+        try (Connection connection = dbConnection.getConnection();
+             PreparedStatement personStatement = connection.prepareStatement(personSql)) {
+
+            ResultSet personResultSet = personStatement.executeQuery();
+
+            while (personResultSet.next()) {
+                int id = personResultSet.getInt("id");
+                String name = personResultSet.getString("name");
+                String address = personResultSet.getString("address");
+                String mobile = personResultSet.getString("mobile");
+                String username = personResultSet.getString("username");
+                String password = personResultSet.getString("password");
+
+                // Fetch employee details
+                try (PreparedStatement employeeStatement = connection.prepareStatement(employeeSql)) {
+                    employeeStatement.setInt(1, id);
+                    ResultSet employeeResultSet = employeeStatement.executeQuery();
+
+                    if (employeeResultSet.next()) {
+                        double salary = employeeResultSet.getDouble("salary");
+                        int experience = employeeResultSet.getInt("experience");
+
+                        // Fetch driver details
+                        try (PreparedStatement driverStatement = connection.prepareStatement(driverSql)) {
+                            driverStatement.setInt(1, id);
+                            ResultSet driverResultSet = driverStatement.executeQuery();
+
+                            if (driverResultSet.next()) {
+                                String licenseNumber = driverResultSet.getString("license_number");
+                                String licenseType = driverResultSet.getString("license_type");
+
+                                drivers.add(new Driver(name, address, mobile, username, password, salary, experience, licenseNumber, licenseType));
+                            }
+                        }
+                    }
+                }
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+        return drivers;
     }
 
     @Override

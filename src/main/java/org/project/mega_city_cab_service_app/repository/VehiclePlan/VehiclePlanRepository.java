@@ -1,6 +1,6 @@
 package org.project.mega_city_cab_service_app.repository.VehiclePlan;
 
-import org.project.mega_city_cab_service_app.model.VehiclePlan;
+import org.project.mega_city_cab_service_app.model.Plan.VehiclePlan;
 
 import java.util.List;
 

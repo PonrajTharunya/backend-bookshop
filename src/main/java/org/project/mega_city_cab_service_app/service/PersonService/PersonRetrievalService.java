@@ -3,6 +3,8 @@ package org.project.mega_city_cab_service_app.service.PersonService;
 import org.project.mega_city_cab_service_app.model.person.*;
 import org.project.mega_city_cab_service_app.model.Parent.Person;
 
+import java.util.List;
+
 public class PersonRetrievalService {
     private final PersonService personService;
 
@@ -32,7 +34,25 @@ public class PersonRetrievalService {
             return "{\"error\": \"Person not found.\"}";
         }
     }
+    public String getAllPersonsByType(String type) {
+        List<Person> persons = personService.getAllPersonsByType(type);
+        if (persons.isEmpty()) {
+            return "{\"error\": \"No persons found for type: " + type + "\"}";
+        }
 
+        StringBuilder jsonBuilder = new StringBuilder("[");
+        for (Person person : persons) {
+            jsonBuilder.append(buildPersonJson(person)).append(",");
+        }
+
+        // Remove the trailing comma and close the JSON array
+        if (jsonBuilder.length() > 1) {
+            jsonBuilder.setLength(jsonBuilder.length() - 1);
+        }
+        jsonBuilder.append("]");
+
+        return jsonBuilder.toString();
+    }
     /**
      * Builds a JSON string based on the type of the person.
      */
